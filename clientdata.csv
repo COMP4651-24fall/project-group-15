@@ -1,4 +1,1 @@
 user_id,event_time,event_type,product_id,category_id,category_code,brand,price,user_session
-3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898,128
-3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99,128
-10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100,128

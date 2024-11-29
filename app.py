@@ -94,19 +94,22 @@ def get_recommendations():
 
 @app.route('/login', methods=['POST'])
 def login():
-    user_list = list(pd.read_csv("dummy_data.csv")["user_id"].unique())
+    # Load valid client IDs from clientlist.csv
+    try:
+        user_list = pd.read_csv("clientlist.csv")["clientid"].unique().tolist()
+    except Exception as e:
+        flash('Error loading client list. Please try again later.', 'error')
+        return redirect(url_for('index'))
+
     user_id = request.form.get('user_id')
     if user_id:
         try:
             user_id = int(user_id)
-            if user_id < 0:
-                flash('Please enter a valid USER ID (non-negative integer only).', 'error')
-                return redirect(url_for('index'))
-            elif user_id not in user_list:
-                flash(f'Please enter a valid USER ID (User ID {user_id} not exist!).', 'error')
+            if user_id not in user_list:
+                flash(f'Please enter a valid USER ID (User ID {user_id} does not exist!).', 'error')
                 return redirect(url_for('index'))
             session['user_id'] = user_id
-            return redirect(url_for('personal'))  # Make sure this is correct
+            return redirect(url_for('personal'))  # Redirect to personal.html
         except ValueError:
             flash('Please enter a valid user ID (non-negative integer only).', 'error')
             return redirect(url_for('index'))
@@ -141,31 +144,29 @@ def fetch_items_by_recommendations(recommendations):
 
 @app.route('/submit_contribution', methods=['POST'])
 def submit_contribution():
-    user_ids = request.form.getlist('user_id[]')  # Get the user IDs from the form
-    event_times = request.form.getlist('event_time[]')  # Get all event times
-    event_types = request.form.getlist('event_type[]')  # Get all event types
-    product_ids = request.form.getlist('product_id[]')  # Get all product IDs
-    category_ids = request.form.getlist('category_id[]')  # Get all category IDs
-    category_codes = request.form.getlist('category_code[]')  # Get all category codes
-    brands = request.form.getlist('brand[]')  # Get all brands
-    prices = request.form.getlist('price[]')  # Get all prices
-    user_sessions = request.form.getlist('user_session[]')  # Get all user session IDs
+    user_ids = request.form.getlist('user_id[]')
+    event_times = request.form.getlist('event_time[]')
+    event_types = request.form.getlist('event_type[]')
+    product_ids = request.form.getlist('product_id[]')
+    category_ids = request.form.getlist('category_id[]')
+    category_codes = request.form.getlist('category_code[]')
+    brands = request.form.getlist('brand[]')
+    prices = request.form.getlist('price[]')
+    user_sessions = request.form.getlist('user_session[]')
 
-    # Prepare data to be written to CSV
     contributions = []
-
     for user_id, event_time, event_type, product_id, category_id, category_code, brand, price, user_session in zip(
             user_ids, event_times, event_types, product_ids, category_ids, category_codes, brands, prices, user_sessions):
         contributions.append({
-            'user_id': user_id,  # Use the user_id from the form
-            'event_time': event_time,
-            'event_type': event_type,
-            'product_id': product_id,
-            'category_id': category_id,
-            'category_code': category_code,
-            'brand': brand,
-            'price': price,
-            'user_session': user_session
+            'user_id': int(user_id),  # Ensure user_id is an integer
+            'event_time': event_time.strip(), 
+            'event_type': event_type.strip(), 
+            'product_id': int(product_id),  # Convert to integer
+            'category_id': int(category_id),  # Convert to integer
+            'category_code': category_code.strip(), 
+            'brand': brand.strip(),  
+            'price': float(price),  
+            'user_session': int(user_session)  # Ensure user_session is an integer
         })
 
     # Append contributions to dummy_data.csv
@@ -175,7 +176,55 @@ def submit_contribution():
             writer.writeheader()
         writer.writerows(contributions)
 
+    # Remove the submitted data from clientdata.csv
+    try:
+        existing_data = pd.read_csv('clientdata.csv')
+
+        # Print the types of the existing data
+        print("Existing data types:")
+        print(existing_data.dtypes)
+
+        # Ensure correct data types in existing_data
+        existing_data['user_id'] = existing_data['user_id'].astype(int)
+        existing_data['price'] = existing_data['price'].astype(float)
+
+        # Create a DataFrame for the submitted contributions
+        contributions_df = pd.DataFrame(contributions)
+
+        # Create a mask to filter out contributions
+        mask = pd.Series([False] * len(existing_data))
+
+        for _, contribution in contributions_df.iterrows():
+            print(f"Checking contribution: {contribution.to_dict()}")
+
+            current_mask = (
+                (existing_data['user_id'] == contribution['user_id']) &
+                (existing_data['event_time'] == contribution['event_time']) &
+                (existing_data['event_type'] == contribution['event_type']) &
+                (existing_data['product_id'] == contribution['product_id']) &
+                (existing_data['category_id'] == contribution['category_id']) &
+                (existing_data['category_code'] == contribution['category_code']) &
+                (existing_data['brand'] == contribution['brand']) &
+                (existing_data['price'] == contribution['price']) &
+                (existing_data['user_session'] == contribution['user_session'])
+            )
+
+            # Debugging prints
+            print(f"Current mask for this contribution: {current_mask.values}")
+
+            mask |= current_mask
+
+        # Filter the existing data to keep rows not in the contributions
+        updated_data = existing_data[~mask]
+
+        # Write the updated data back to clientdata.csv
+        updated_data.to_csv('clientdata.csv', index=False)
+
+    except Exception as e:
+        flash(f'Error processing contributions: {e}', 'error')
+
     flash('Contributions submitted successfully!', 'success')
     return redirect(url_for('personal'))  # Redirect back to the personal dashboard
+
 if __name__ == '__main__':
     app.run(debug=True)

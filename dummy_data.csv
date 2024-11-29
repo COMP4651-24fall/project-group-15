@@ -1,4 +1,23 @@
 user_id,event_time,event_type,product_id,category_id,category_code,brand,price,user_session
-0,2024-11-07 04:58:23 UTC,view,product1,cat1,code1,brand1,29.99,session1
-1,2024-11-07 05:00:00 UTC,cart,product2,cat2,code2,brand2,19.99,session2
-2,2024-11-07 05:05:00 UTC,purchase,product3,cat3,code3,brand3,39.99,session3
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,898.0,128
+3,2024-11-01 04:58:23 UTC,view,1,10,test,test,99.0,128
+10,2024-11-01 04:58:23 UTC,purchase,2,6,test,test,100.0,128
+12,2024-11-01 04:58:23 UTC,cart,3,4,test,test,55.0,22
