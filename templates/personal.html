@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+      }
+      .featured-items {
+        text-align: center;
+        margin: 40px 0;
+      }
+      .footer-buttons {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+      }
+      .item-container {
+        margin-bottom: 20px; /* Space between items */
+        border: 1px solid #ccc; /* Optional border */
+        border-radius: 8px; /* Rounded corners */
+        padding: 10px; /* Padding inside item */
+        transition: transform 0.2s; /* Smooth scaling */
+      }
+      .item-container:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img
+          src="{{ url_for('static', filename='images/dummy_logo.png') }}"
+          alt="Logo"
+          class="logo"
+          style="max-width: 150px"
+        />
+        <div class="user-id">Welcome, Shop {{ session['user_id'] }}</div>
+      </div>
+      <!-- Display flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="alert alert-warning">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <div class="featured-items">
+        <h1>Today's Featured Items</h1>
+        <div class="row">
+          {% if featured_items %} {% for item in featured_items %}
+          <div class="col-md-4">
+            <div class="item-container">
+              <img
+                src="{{ url_for('static', filename='images/' + item.image) }}"
+                alt="{{ item.description }}"
+                class="item-image transparent-image"
+              />
+              <p>{{ item.description }}</p>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <p>No featured items available today.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="footer-buttons">
+        <a href="{{ url_for('contribute') }}" class="btn btn-primary"
+          >Contribute</a
+        >
+        <!-- <a href="{{ url_for('get_recommendations') }}" class="btn btn-primary">Get Recommendations</a> -->
+        <form
+          method="post"
+          action="{{ url_for('get_recommendations') }}"
+          style="display: inline"
+        >
+          <button type="submit" class="btn btn-primary">
+            Get Recommendations
+          </button>
+        </form>
+        <a href="{{ url_for('index') }}" class="btn btn-danger">LOG OUT</a>
+        <!-- Logout button -->
+      </div>
+    </div>
+  </body>
+</html>

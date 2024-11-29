@@ -1,0 +1,4 @@
+user_id,event_time,event_type,product_id,category_id,category_code,brand,price,user_session
+0,2024-11-07 04:58:23 UTC,view,product1,cat1,code1,brand1,29.99,session1
+1,2024-11-07 05:00:00 UTC,cart,product2,cat2,code2,brand2,19.99,session2
+2,2024-11-07 05:05:00 UTC,purchase,product3,cat3,code3,brand3,39.99,session3
