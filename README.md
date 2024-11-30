@@ -6,6 +6,9 @@ In deep learning, accessing a large enough dataset and training a model on them 
 
 We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning System to facilitate cross-merchant recommendation model training. By leveraging FL systems, combined with blockchain, distributed storage systems, and cloud computing via Function as a Service provider (FaaS), this system provides privacy-protected collaboration and scalability while maintaining robustness. This project primarily focuses on the realization of distributed and parallel collaboration over the Internet rather than AI model optimization.
 
+![](./flow1.jpg)
+![](./flow.jpg)
+
 # Code Descriptions 
 
 ## [Ethereum Smart Contract](eth_smart_contract/store_multiple_hash.sol)
