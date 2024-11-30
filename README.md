@@ -120,6 +120,24 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
 * First retrive the hash CID from Smart Contract and get the encoded model from IPFS.
     > **Note :** The model is encoded in base64 to reduce length
 
+## [Recommendation System Model](lambda/model-contribute.py)
+* We used the “eCommerce behavior data from multi category store” dataset, an open source dataset containing a total of about 285,000,000 rows and 9 columns
+* However, due to the lack of training resources, we will only use around 30,000 data points. 
+We simulate the usage of multiple clients by separating the 30,000 data points into 3 batches of 10,000 data points, spread across 3 clients.
+* The model is a simple Stochastic Gradient Descent, with inputs consisting of a User to Product matrix (mapped for each User and Product Pair) and a label Tensor based on the action of the user toward a specific product. 
+* We used a collaborative filtering system for the users and items as collaborative filtering doesn’t require feature information of users and items besides the user-item interaction data. This ultimately matches our use case. To do that, we have to learn the matrix factorization of the User to Product matrix to represent each of the products and users by 20-dimensional vectors in default. 
+
+
+## [IPFS AWS Streaming Test](https://drive.google.com/file/d/1k96OHitGjeOGBpBM0z-hefNCLvi87sZ1/view?usp=sharing)
+* For security reasons Git do not allow me to upload here
+* Performed streaming tests on IPFS hosted on EC2 vs AWS S3 buckets by measuring upload and download time for files of different sizes. (1, 5, 10, 20, 50 MB)
+* We can see that generally IPFS takes more time in both operations. 
+* Movever, as file size increases, upload time of IPFS increases significantly.
+* This highlights the trade-offs between distributed and centralized storage, while IPFS prevents single-point failure, hashing and distributing files across the network becomes a bottleneck, which may not be ideal for high-throughput scenarios involving large files. 
+
+    ![alt text](./Figure_1.png)
+
+
 # How to Use
 
 ## 1. Frontend UI
