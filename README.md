@@ -152,7 +152,7 @@ We simulate the usage of multiple clients by separating the 30,000 data points i
     > **Note:** Make sure to save the file in the appropriate directory where you want to work with it.
 2. Navigate to the directory \
     Open your terminal and navigate to the directory where the file is saved. For example
-3. Run `ssh -i "4651-project-keypair.pem" ubuntu@ec2-54-174-31-161.compute-1.amazonaws.com`\
+3. Run `ssh -i "COMP4651-project-new.pem" ubuntu@ec2-35-168-133-141.compute-1.amazonaws.com`\
     This will connect to our EC2 instance, and the IPFS server will be automatically iniiated
 
 ## 3. Whole Process
