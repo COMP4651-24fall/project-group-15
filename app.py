@@ -59,14 +59,13 @@ def get_recommendations():
     #    return redirect(url_for('index'))  # Redirect if user is not logged in
 
     # uncomment them when the http request is avaliable
-    """
-    lambda_url = 'https://hco230csm8.execute-api.us-east-1.amazonaws.com/default/ipfs-blockchain-federated-pipeline'  # Update accordingly
+    lambda_url = 'https://hco230csm8.execute-api.us-east-1.amazonaws.com/default/ipfs-blockchain-federated-pipeline' 
     response = requests.post(lambda_url)
     response_state = response.status_code
-    """ 
+
     response_state = 200  # remove this when http request is avaliable
     if response_state == 200:
-        """
+
         model_data = response.json()  # Get the model data from the Lambda response
         
         # Load the model with the retrieved data
@@ -91,6 +90,7 @@ def get_recommendations():
 
         # Get the first 3 elements
         recommendations_list = arr[:3]
+        """
 
         # Fetch item details based on recommendations
         selected_items = fetch_items_by_recommendations(recommendations_list)
