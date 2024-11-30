@@ -119,9 +119,21 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
     }
     ```
 ## [Download Model Handler](lambda/download-model.py)
-* A lambda handler for retrieving the model from IPFS
+* A GCP Cloud Run Function handler for retrieving the model from IPFS
 * First retrive the hash CID from Smart Contract and get the encoded model from IPFS.
     > **Note :** The model is encoded in base64 to reduce length
+* Sample HTTP POST request in python
+    ```
+    import requests
+
+    url = "https://us-central1-bright-calculus-420514.cloudfunctions.net/federated-learning-download-model"
+    payload = {
+        "clientIndex": "0",
+    }
+
+    response = requests.post(url, json=payload)
+    ```
+* Then the response is decoded and reconstructred to model using `torch.load()`
 
 ## [Recommendation System Model](lambda/model-contribute.py)
 * We used the “eCommerce behavior data from multi category store” dataset, an open source dataset containing a total of about 285,000,000 rows and 9 columns
