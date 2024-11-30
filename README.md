@@ -1,5 +1,9 @@
 # COMP4651 Project -- An IPFS-Blockchain-based Decentralized Federated Learning System for E-Commerce
 
+## Group Member
+* CHAN, Ho Wing 20853661
+* LEE, Pak Nin 20807222
+* LIU, Kwun Ho 20959984
 
 ## Introduction
 In deep learning, accessing a large enough dataset and training a model on them are the most common challenges [1]. Especially in e-commerce, it is difficult for a small enterprise to acquire a large enough data sample to train an accurate recommendation system. While pooling data from multiple e-commerce clients to train a centralized model could enhance recommendation performance, such an approach is infeasible due to privacy concerns and long training time. Referencing from the distributed cloud computing anatomy, the Federated Learning (FL) system has emerged as an alternative [2]. Participating entities train models on their local dataset and share updates. However this framework relies on a trusting centralized server. To address these limitations, decentralized FL frameworks have been proposed, leveraging peer-to-peer interactions to eliminate the need for a central coordinator.
