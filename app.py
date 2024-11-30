@@ -7,27 +7,33 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import csv
+import json
 
-# Define your model class
-class ModelClass(nn.Module):
-    def __init__(self):
-        super(ModelClass, self).__init__()
-        self.fc1 = nn.Linear(in_features=10, out_features=50)  # Adjust input/output features
-        self.fc2 = nn.Linear(in_features=50, out_features=20)
-        self.fc3 = nn.Linear(in_features=20, out_features=6)  # Adjust for your output size
+class MatrixFactorization(torch.nn.Module):
 
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)  # No activation for the output layer 
-        return x
+    def __init__(self, n_users, n_items, n_factors=20):
+        super().__init__()
+        self.user_factors = torch.nn.Embedding(n_users, n_factors)
+        self.item_factors = torch.nn.Embedding(n_items, n_factors)
+        self.user_biases = torch.nn.Embedding(n_users, 1)
+        self.item_biases = torch.nn.Embedding(n_items,1)
+        torch.nn.init.xavier_uniform_(self.user_factors.weight)
+        torch.nn.init.xavier_uniform_(self.item_factors.weight)
+        self.user_biases.weight.data.fill_(0.)
+        self.item_biases.weight.data.fill_(0.)
+        
+    def forward(self, user, item):
+        pred = self.user_biases(user) + self.item_biases(item)
+        pred += (self.user_factors(user) * self.item_factors(item)).sum(1, keepdim=True)
+        return pred.squeeze()
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
 
 def load_model(model_data):
-    model = ModelClass()
-    
+
+    model = MatrixFactorization(7007, 9424)
+
     # Load the state dictionary into the model
     model.load_state_dict({k: torch.tensor(np.array(v)) for k, v in model_data.items()})
     
@@ -42,8 +48,18 @@ def load_items():
 
 # Load user ratings from dummy_data.csv
 def load_ratings():
-    df = pd.read_csv('dummy_data.csv')
-    ratings = df.to_dict(orient='records')  # Convert DataFrame to a list of dictionaries
+    ratings = {}
+    # uncomment them when the http request is avaliable
+    lambda_url = 'https://izn57rx97g.execute-api.us-east-1.amazonaws.com/default/model-recommend' 
+    response = requests.post(lambda_url)
+    response_state = response.status_code
+
+    response_state = 200  # remove this when http request is avaliable
+    if response_state == 200:
+        resp = response.json()
+        df = pd.json_normalize(json.loads(resp))
+        ratings = df.to_dict(orient='records')  # Convert DataFrame to a list of dictionaries
+    
     return ratings
 
 @app.route('/')
@@ -127,6 +143,12 @@ def contribute():
     items = pd.read_csv('items.csv').to_dict(orient='records')  # Load items if needed
     # Load client data from clientdata.csv
     client_data = pd.read_csv('clientdata.csv').to_dict(orient='records')
+    
+    # uncomment them when the http request is avaliable
+    lambda_url = 'https://izn57rx97g.execute-api.us-east-1.amazonaws.com/default/model-contribute' 
+    response = requests.post(lambda_url)
+    response_state = response.status_code
+
     return render_template('contribute.html', items=items, client_data=client_data)
 
 @app.route('/home')
