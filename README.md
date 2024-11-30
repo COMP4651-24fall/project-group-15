@@ -2,9 +2,9 @@
 
 
 ## Introduction
-In training a deep learning model, accessing a large enough dataset is always a challenge. In e-commerce, it is difficult for a small enterprise to acquire a large enough data sample to train an accurate recommendation system. While pooling data from multiple e-commerce clients to train a centralized model could enhance recommendation performance, such an approach is infeasible due to privacy concerns. In recent years the Federated Learning (FL) system has emerged as an alternative. Participating entities train models on their local dataset and share updates. However this framework relies on a trusting centralized server. To address these limitations, decentralized FL frameworks have been proposed, leveraging peer-to-peer interactions to eliminate the need for a central coordinator.
+In deep learning, accessing a large enough dataset and training a model on them are the most common challenges [1]. Especially in e-commerce, it is difficult for a small enterprise to acquire a large enough data sample to train an accurate recommendation system. While pooling data from multiple e-commerce clients to train a centralized model could enhance recommendation performance, such an approach is infeasible due to privacy concerns and long training time. Referencing from the distributed cloud computing anatomy, the Federated Learning (FL) system has emerged as an alternative [2]. Participating entities train models on their local dataset and share updates. However this framework relies on a trusting centralized server. To address these limitations, decentralized FL frameworks have been proposed, leveraging peer-to-peer interactions to eliminate the need for a central coordinator.
 
-We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning System to facilitate cross-merchant recommendation model training. By leveraging federated learning (FL) systems, combined with blockchain, distributed storage systems, and cloud computing via Function as a Service provider (FaaS), this system provides privacy-protected collaboration and scalability while maintaining robustness. This project primarily focuses on the realization of distributed and parallel collaboration over the Internet rather than AI model optimization.
+We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning System to facilitate cross-merchant recommendation model training. By leveraging FL systems, combined with blockchain, distributed storage systems, and cloud computing via Function as a Service provider (FaaS), this system provides privacy-protected collaboration and scalability while maintaining robustness. This project primarily focuses on the realization of distributed and parallel collaboration over the Internet rather than AI model optimization.
 
 # Code Descriptions 
 
@@ -20,7 +20,7 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
 * All file content should be transformed into **base64 encoded** before uploading
 * Sample of file reading via HTTP POST in python
     ```
-    url = "https://2zk0vq0ll6.execute-api.us-east-1.amazonaws.com/default/ipfs-file-streaming"
+    url = "https://emviofaj63.execute-api.us-east-1.amazonaws.com/default/ipfs-handler"
     payload = {
         "action": "1",
         "cid": "<CID of that file>"
@@ -39,7 +39,7 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
     ```
 * Sample of file uploading via HTTP POST in python
     ```
-    url = "https://2zk0vq0ll6.execute-api.us-east-1.amazonaws.com/default/ipfs-file-streaming"
+    url = "https://emviofaj63.execute-api.us-east-1.amazonaws.com/default/ipfs-handler"
     payload = {
         "action": "0",
         "fileName": "<File name>"
@@ -65,7 +65,7 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
 
 * Sample hash reading via HTTP POST in python
     ```
-    url = "https://82o2i4mwfc.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
+    url = "https://r3h9ia9po3.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
     payload = {
         "action": "1",
         "clientIndex": "<Client index>",
@@ -82,7 +82,7 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
     ```
 * Sample hash uploading via HTTP POST in python
     ```
-    url = "https://82o2i4mwfc.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
+    url = "https://r3h9ia9po3.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
     payload = {
         "action": "1",
         "clientIndex": "<Client index>",
@@ -99,7 +99,7 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
 * Then the new models are updated in the IPFS and blockchain storage system
 * Sample HTTP POST request in python
     ```
-    url = "https://g6jentj8ia.execute-api.us-east-1.amazonaws.com/default/ipfs-blockchain-federated-pipeline"
+    url = "https://hco230csm8.execute-api.us-east-1.amazonaws.com/default/ipfs-blockchain-federated-pipeline"
     payload = {
         "updatedClientIndex": "<Index of client updated their model>",
         "blockchainEnabled": "1",
@@ -115,23 +115,33 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
         "body": "true"
     }
     ```
+## [Download Model Handler](lambda/download-model.py)
+* A lambda handler for retrieving the model from IPFS
+* First retrive the hash CID from Smart Contract and get the encoded model from IPFS.
+    > **Note :** The model is encoded in base64 to reduce length
 
 # How to Use
 
-## Frontend UI
+## 1. Frontend UI
 1.  run `pip install Flask pandas` in the terminal
 2.  run the command `python app.py` in the terminal
 
-## Start the IPFS Server
-1. Download our AWS key pair from [./EC2_instance/4651-project-keypair.pem](./EC2_instance/4651-project-keypair.pem)
+## 2. Start the IPFS Server
+1. Download our AWS key pair from [EC2_instance/COMP4651-project-new.pem]()
     > **Note:** Make sure to save the file in the appropriate directory where you want to work with it.
 2. Navigate to the directory \
     Open your terminal and navigate to the directory where the file is saved. For example
 3. Run `ssh -i "4651-project-keypair.pem" ubuntu@ec2-54-174-31-161.compute-1.amazonaws.com`\
     This will connect to our EC2 instance, and the IPFS server will be automatically iniiated
 
-## Whole Process
-...describe how to get recommendation, contribute
+## 3. Whole Process
+1. Login in to the corresponding merchant you are, here we assume only 3 merchants
+2. In the home page, there will be some general recommendations
+3. Click "Get Recommendation" button to inference with the model to get recommendations, able to regenerate
+4. Click "Contribute" to start the Federated Learning pipeline
+5. At the page, you can add or delete the transaction records you would like to contribute
+6. Click "Submit" button to submit the data to model training, then initiate the pipeline to aggregate the model and update for other clients
 
 
+Demo video: https://drive.google.com/file/d/1HWlZobyp-6UkT7WQhLxLpSzolnWDZBrh/view?usp=sharing
 
