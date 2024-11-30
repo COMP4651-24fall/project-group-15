@@ -9,6 +9,23 @@ We propose an IPFS-Blockchain-based Distributed Decentralized Federated Learning
 ![](./flow1.jpg)
 ![](./flow.jpg)
 
+# File Descriptions 
+The `lambda` folder holds all the AWS lambda implementation
+
+1. `base64-to-torch.py` helps decode base64-encoded model and transfer in pytorch model
+2. `blockchain-storage.py` handles read and write of data on to smart contract hosted on ETH Speolia Testnet
+3. `download-model.py` retrieve torch model from IPFS by first reading the corresponding CID hash from smart contract
+4. `federated-learning-gcp.py` handles the federated learning aggregation process
+5. `ipfs_storage.js` handles storing and reading file onto IPFS
+6. `ipfs-blockchain-federated-pipeline.py` handles the IPFS-Blockchain federating learning pipeline
+7. `model-contribute.py` model training program
+8. `model-recommend.py` inferencing the model
+
+`app.py` front end UI
+
+The `ml_model` folder stores the trained model in `.pth` and the corresponding dataset used.
+
+
 # Code Descriptions 
 
 ## [Ethereum Smart Contract](eth_smart_contract/store_multiple_hash.sol)
