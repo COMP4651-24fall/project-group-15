@@ -7,8 +7,9 @@ from io import BytesIO
 import base64
 import torch.nn as nn
 
-def fetch_model_from_ipfs(index, cid):
-    url = "https://2zk0vq0ll6.execute-api.us-east-1.amazonaws.com/default/ipfs-file-streaming"
+# A method to fetch the model from IPFS
+def fetch_model_from_ipfs(index, cid): 
+    url = "https://emviofaj63.execute-api.us-east-1.amazonaws.com/default/ipfs-handler"
     payload = {
         "action": "1",
         "cid": cid
@@ -18,28 +19,20 @@ def fetch_model_from_ipfs(index, cid):
     if response.status_code == 200:
         
         response_data = response.json()
-        file_content_base64 = response_data.get("fileContent") 
+        file_content_base64 = (response_data.get("fileContent"))
+        print(file_content_base64)
 
-        # Decode the Base64-encoded content back into binary data
-        try:
-            file_bytes = base64.b64decode(file_content_base64)
-        except Exception as e:
-            raise Exception(f"Failed to decode file content: {e}")
+        # Decode the Base64-encoded content back into binary data 
+        file_bytes = base64.b64decode(file_content_base64) 
         
         with open(f"model{index}.pth", "wb") as f:
             f.write(file_bytes)
-        print(f"File saved as model{index}.pth for inspection.")
-
-        # Load the PyTorch model directly from the decoded binary data
-        try:
-            model = torch.load(io.BytesIO(file_bytes), map_location=torch.device('cpu'))  # Map to CPU for safety
-        except Exception as e:
-            raise Exception(f"Failed to load PyTorch model: {e}")
+        print(f"File saved as model{index}.pth for inspection.")  
         
-        return model
     else:
         raise Exception(f"Failed to fetch model from IPFS. Status code: {response.status_code}, Response: {response.content}")
 
+# A method to upload the model to IPFS
 def upload_model_to_ipfs(index, model):
     # Save the model to a buffer
     buffer = BytesIO()
@@ -49,9 +42,8 @@ def upload_model_to_ipfs(index, model):
     # Encode the model to Base64
     model_base64 = base64.b64encode(buffer.read()).decode("utf-8")
     #print(model_base64)
-    
-    # Upload the model to IPFS
-    url = "https://2zk0vq0ll6.execute-api.us-east-1.amazonaws.com/default/ipfs-file-streaming"
+     
+    url = "https://emviofaj63.execute-api.us-east-1.amazonaws.com/default/ipfs-handler"
     payload = {
         "action": "0",
         "fileName": f"aggregated_model{index}.pth",
@@ -66,8 +58,9 @@ def upload_model_to_ipfs(index, model):
     
     return response.json()['cid']
 
-def fetch_hash_from_blockchain(indexStr):
-    url = "https://82o2i4mwfc.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
+# A method to fetch the hash from the blockchain
+def fetch_hash_from_blockchain(indexStr): 
+    url = "https://r3h9ia9po3.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
     payload = {
         "action": "1",
         "clientIndex": indexStr
@@ -80,12 +73,15 @@ def fetch_hash_from_blockchain(indexStr):
     else:
         raise Exception(f"Failed to fetch model from blockchain. Status code: {response.status_code}, Response: {response.content}")
 
-def upload_hash_to_blockchain(index, hash):
-    url = "https://82o2i4mwfc.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
+# A method to upload the hash to the blockchain
+def upload_hash_to_blockchain(index, hashToStore):
+    index = str(index) 
+    hashToStore = str(hashToStore)
+    url = "https://r3h9ia9po3.execute-api.us-east-1.amazonaws.com/default/blockchain-storage"
     payload = {
         "action": "0",
         "clientIndex": index,
-        "content": hash
+        "content": hashToStore
     }
     response = requests.post(url, json=payload)
     
@@ -94,6 +90,7 @@ def upload_hash_to_blockchain(index, hash):
     else:
         raise Exception(f"Failed to upload hash to blockchain. Status code: {response.status_code}, Response: {response.content}")
 
+# A simple model for demonstration
 class SimpleModel(nn.Module):
     def __init__(self):
         super(SimpleModel, self).__init__()
@@ -101,6 +98,7 @@ class SimpleModel(nn.Module):
     
     def forward(self, x):
         return self.fc(x)
+    
 
 # Function to aggregate models
 def aggregate_model(index, updated_model, to_be_updated):  
@@ -144,12 +142,8 @@ def lambda_handler(request):
 
     for i in range(3):
         #call another api to get hash from blockchain
-        client_model_cids.append(fetch_hash_from_blockchain(str(i)))
+        client_model_cids.append(fetch_hash_from_blockchain(str(i))) 
 
-    #client_model_cids[0] = "QmdeCEbBww93j2CAoDV1qjrmaWvW6S73dRETiVHdsCxva9"
-    #updated_model_cid = client_model_cids[updatedClientIndex];
-    #client_model_cids = [cid for i, cid in enumerate(client_model_cids) if i != updatedClientIndex]
-    
     client_model = []
     
     for i in range(3):
@@ -161,7 +155,10 @@ def lambda_handler(request):
             updated_model = torch.load(f"model{i}.pth")
         else:
             client_model.append(torch.load(f"model{i}.pth"))
-
+    
+    #updated_model = torch.load(f"./testModel7.pth")
+    #client_model.append(torch.load(f"./testModel7.pth"))
+   # client_model.append(torch.load(f"./testModel7.pth"))
     #Print before aggregation
     print("Before aggregation")
     display_modle_weights(updated_model)
@@ -209,10 +206,4 @@ def lambda_handler(request):
 
     
     return "true"
-
-'''
-{
-    "updatedClientIndex": "0",
-    "blockchainEnabled": "0"
-}
-'''
+    

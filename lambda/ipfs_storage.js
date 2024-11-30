@@ -1,7 +1,7 @@
 import { create } from 'ipfs-http-client';
 import fs from 'fs';
 
-const client = create({ url: "http://54.174.31.161:5001/api/v0" });
+const client = create({ url: "http://35.168.133.141:5001/api/v0" });
 
 export const handler = async (event) => {
    
@@ -77,7 +77,7 @@ export const handler = async (event) => {
           chunks.push(chunk);
         }
 
-        const fileContent = Buffer.concat(chunks).toString();
+        const fileContent = Buffer.concat(chunks).toString('base64');
 
         console.log(`File retrieved from IPFS with CID: ${cid}`);
 
